@@ -33,7 +33,9 @@ If you cannot read files in separate folders, read `buyback-skill-full-prompt.md
 
 | Input | Default | Notes |
 |---|---|---|
-| Window | Active & Upcoming buybacks with open dates or unannounced record dates | Can specify month or specific stocks |
+| Window | Active (Ongoing) & Upcoming buybacks: currently open offers, impending record dates, and future announced boards | Can specify month or specific stocks |
+| Scope | Both **Ongoing** (active bidding window / cum-buyback trading) and **Upcoming** (board approved, future record dates) |
+| Data Priority | **NSE MCP Server (Priority 1)**. If not configured, auto-skip to live web search fallback |
 | Budget | Show Rs 50,000 and Rs 2,00,000 (Max SEBI Retail Limit) if not given | If specified, use exact budget |
 | Category | Retail (< Rs 2 Lakhs on Record Date) | Max investment allowed under SEBI 15% quota |
 | Strategy | Arbitrage Tender (Tender maximum shares, manage unaccepted portion) | Arbitrage / Tender-and-Hold |
@@ -43,24 +45,30 @@ State the assumptions in one clear line at the top of the report. Do not stop to
 
 ## Rules for the AI
 
-1. **Use live data and comprehensive searches.** Plan for 15-30 tool calls. Check official exchange circulars (NSE/BSE corporate announcements), Chittorgarh, SEBI Public Announcements (PA), and Letters of Offer (LOF).
-2. **Never invent numbers.** Unverified figures must be labeled "not verified" and receive 0 points in the scoring model.
-3. **Cross-check critical parameters** (Buyback Price, Record Date, Offer Size, Route) from at least 2 distinct sources.
-4. **Distinguish Route strictly**: Tender Offer via Stock Exchange vs. Open Market repurchase. (Tender offers have fixed price and 15% retail reservation; open market does not guarantee retail acceptance).
-5. **Always calculate the SEBI Small Shareholder threshold**:
+1. **Data Source Priority (NSE MCP first):**
+   - **Priority 1: NSE MCP Server.** If an NSE MCP tool/server is configured in your environment, query it on priority for live buyback announcements, corporate filings, circulars, and market prices.
+   - **Fallback:** If NSE MCP is not set up, note in one brief line: *"NSE MCP server not active; using live web search fallback"*, and seamlessly query web sources (NSE/BSE filings, Chittorgarh, SEBI LOF filings). Never abort or halt if MCP is absent.
+2. **Scan Both Ongoing & Upcoming Events:**
+   - **Ongoing / Active:** Tender offers with active bidding windows open on stock exchange platforms, or stocks currently trading cum-buyback before an upcoming Record Date.
+   - **Upcoming:** Buybacks approved by the Board of Directors, buybacks awaiting shareholder/postal ballot clearance, or approved deals awaiting official Record Date announcement.
+3. **Use live data and comprehensive searches.** Plan for 15-30 tool calls. Check official exchange circulars (NSE/BSE corporate announcements), Chittorgarh, SEBI Public Announcements (PA), and Letters of Offer (LOF).
+4. **Never invent numbers.** Unverified figures must be labeled "not verified" and receive 0 points in the scoring model.
+5. **Cross-check critical parameters** (Buyback Price, Record Date, Offer Size, Route) from at least 2 distinct sources.
+6. **Distinguish Route strictly**: Tender Offer via Stock Exchange vs. Open Market repurchase. (Tender offers have fixed price and 15% retail reservation; open market does not guarantee retail acceptance).
+7. **Always calculate the SEBI Small Shareholder threshold**:
    $$\text{Max Retail Shares} = \left\lfloor \frac{2,00,000}{\text{Closing Price on Record Date}} \right\rfloor$$
-6. **Compute both ratios**:
+8. **Compute both ratios**:
    - **Base Entitlement Ratio (ER)**: Official guaranteed ratio disclosed in the Letter of Offer.
    - **Estimated Acceptance Ratio (AR)**: Expected final acceptance based on retail shareholder participation history (typically 1.5x–4x the base entitlement).
-7. **Always model 3 post-buyback scenarios**:
+9. **Always model 3 post-buyback scenarios**:
    - Bull (Full recovery to CMP)
    - Base (Normal 5-8% post record-date dip)
    - Bear (12-15% market correction on unaccepted shares)
-8. **Factor in the new Finance Act 2024 tax regime**:
+10. **Factor in the new Finance Act 2024 tax regime**:
    - Buyback proceeds are taxed as **Deemed Dividend** under Section 2(22)(f) at slab rates.
    - Acquisition cost of accepted shares is treated as Capital Loss (STCL) to offset other capital gains.
-9. **Score at least 5-10 buybacks** (or all active candidates if fewer) before selecting top picks.
-10. **Always end with the standard regulatory disclaimer.**
+11. **Score at least 5-10 buybacks** (or all active candidates if fewer) before selecting top picks.
+12. **Always end with the standard regulatory disclaimer.**
 
 ## Workflow
 

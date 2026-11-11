@@ -26,7 +26,9 @@ All the rules are in this one file, in this order: depth standard, research chec
 
 | Input | Default |
 |-------|---------|
-| Window | "this week" = today to the end of the next 7 days of ex-dates. Also list later ex-dates that need a buy before the weekend |
+| Window | Active (Ongoing) & Upcoming: today through the next 14 days of ex-dates. Includes currently trading cum-dividend stocks and future announced dates |
+| Scope | Both **Ongoing** (cum-dividend trading window) and **Upcoming** (board approved, declared, future ex-dates) |
+| Data Priority | **NSE MCP Server (Priority 1)**. If not configured, auto-skip to live web search fallback |
 | Budget | Show Rs 10,000 and Rs 50,000 if none given; if given, use only that |
 | Risk | Moderate |
 | Goal | Dividend + Value |
@@ -36,16 +38,22 @@ State the assumptions in one line at the top of the report. Do not stop to ask q
 
 ## Rules for the AI
 
-1. **Use live data and many searches.** Plan for 15-30 tool calls. One or two searches is never enough. If tools are not available, ask the user to paste the dividend list and stock data, and say that the report is limited.
-2. **Never invent numbers.** Unverified items are marked "not verified" and score 0 (see the score range rule in `scoring-model.md`).
-3. **Cross-check** price, ex-date and dividend from at least 2 sources for the top picks. If sources disagree, show both and use the more recent one, flagged.
-4. **Show date and source** for every key number.
-5. **Score at least 10 stocks** (or all that pass the gates, if fewer than 10) before choosing the top picks. Show the full screening table.
-6. **Deep-dive the top 3-4 picks** using the research checklist.
-7. **Always run scenarios** (price recovers fast / slowly / never) with rupee results.
-8. **Always check the exchange holiday calendar** before computing buy-by dates.
-9. **Run the self-check** in `depth-standard.md` before sending. Fix gaps, or list them under "Limits of this report".
-10. **Always end with the disclaimer.** Use neutral wording: the dividend is not free money, because the price normally drops by about the dividend on the ex-date.
+1. **Data Source Priority (NSE MCP first):**
+   - **Priority 1: NSE MCP Server.** If an NSE MCP tool/server is configured in your environment, use it on priority for live corporate actions, quote data, and exchange announcements.
+   - **Fallback:** If NSE MCP is not set up, note in one brief line: *"NSE MCP server not active; using live web search fallback"*, and seamlessly use web search (NSE/BSE filings, Chittorgarh, Screener, Yahoo Finance). Never abort or halt if MCP is absent.
+2. **Scan Both Ongoing & Upcoming Events:**
+   - **Ongoing / Active:** Stocks currently trading cum-dividend (Ex-date is today or in the current settlement cycle) where investors can still buy to receive the payout.
+   - **Upcoming:** Dividends declared by the board with future Ex-Dates, as well as announced board meetings scheduled to consider dividend declarations.
+3. **Use live data and many searches.** Plan for 15-30 tool calls. One or two searches is never enough.
+4. **Never invent numbers.** Unverified items are marked "not verified" and score 0 (see the score range rule in `scoring-model.md`).
+5. **Cross-check** price, ex-date and dividend from at least 2 sources for the top picks. If sources disagree, show both and use the more recent one, flagged.
+6. **Show date and source** for every key number.
+7. **Score at least 10 stocks** (or all that pass the gates, if fewer than 10) before choosing the top picks. Show the full screening table.
+8. **Deep-dive the top 3-4 picks** using the research checklist.
+9. **Always run scenarios** (price recovers fast / slowly / never) with rupee results.
+10. **Always check the exchange holiday calendar** before computing buy-by dates.
+11. **Run the self-check** in `depth-standard.md` before sending. Fix gaps, or list them under "Limits of this report".
+12. **Always end with the disclaimer.** Use neutral wording: the dividend is not free money, because the price normally drops by about the dividend on the ex-date.
 
 ## Workflow
 
